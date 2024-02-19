@@ -26,7 +26,7 @@ Macros control the behavior of scripts.
 |Name|Description|Default|
 |--------------|--------------|--------------|
 |{$REMOTE.PING.NAME1}|Name to show in every item discobery|None
-||IP to ping|None|
+|{$REMOTE.PING.IP1}|IP to ping|None|
 |{$ICMP.PING.LOSS}|ICMP ping loss in percent.|40|
 |{$ICMP.PING.LATENCY}|Time in seconds it takes to respond to an ICMP ping.|0.1|
 
