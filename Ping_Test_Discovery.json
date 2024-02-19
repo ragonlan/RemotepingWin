@@ -1,0 +1,219 @@
+{
+  "zabbix_export": {
+      "version": "6.0",
+      "date": "2024-02-19T10:59:57Z",
+      "groups": [
+          {
+              "uuid": "57b7ae836ca64446ba2a396389c312a8",
+              "name": "Templates"
+          }
+      ],
+      "templates": [
+          {
+              "uuid": "b4d7b13ad309444d8faee7d524b4f4de",
+              "template": "Remote Ping Test - ICMP Agent Discovery Windows",
+              "name": "Remote Ping Test - ICMP Agent Discovery Windows",
+              "groups": [
+                  {
+                      "name": "Templates"
+                  }
+              ],
+              "discovery_rules": [
+                  {
+                      "uuid": "591e5e2abbda4fa3bcdf06343a0a5044",
+                      "name": "Get icmp tests from macros",
+                      "type": "SCRIPT",
+                      "key": "get_icmp_tests_from_macros",
+                      "delay": "10m",
+                      "params": "res = []\n\nfunction isValidName(str) {\n  const regex = /^[a-zA-Z0-9 \\-_.()\\/\\\\]+$/;\n  return regex.test(str);\n}\n\nfunction check(name, ip) {\n  if (isValidName(name)){\n    const data = {\n      \"{#INSTANCE.NAME}\": name,\n      \"{#INSTANCE.IP}\": ip, \n    }\n    res.push(data)\n  }\n}\ncheck('{$REMOTE.PING.NAME1}', '{$REMOTE.PING.IP1}')\ncheck('{$REMOTE.PING.NAME2}', '{$REMOTE.PING.IP2}')\ncheck('{$REMOTE.PING.NAME3}', '{$REMOTE.PING.IP3}')\ncheck('{$REMOTE.PING.NAME4}', '{$REMOTE.PING.IP4}')\ncheck('{$REMOTE.PING.NAME5}', '{$REMOTE.PING.IP5}')\ncheck('{$REMOTE.PING.NAME6}', '{$REMOTE.PING.IP6}')\ncheck('{$REMOTE.PING.NAME7}', '{$REMOTE.PING.IP7}')\ncheck('{$REMOTE.PING.NAME8}', '{$REMOTE.PING.IP8}')\ncheck('{$REMOTE.PING.NAME9}', '{$REMOTE.PING.IP9}')\ncheck('{$REMOTE.PING.NAME10}', '{$REMOTE.PING.IP10}')\ncheck('{$REMOTE.PING.NAME11}', '{$REMOTE.PING.IP11}')\ncheck('{$REMOTE.PING.NAME12}', '{$REMOTE.PING.IP12}')\nreturn JSON.stringify(res)",
+                      "lifetime": "2h",
+                      "item_prototypes": [
+                          {
+                              "uuid": "49cf2a0320c344b8ac0acbb36fe0c1a4",
+                              "name": "Remote ping to {#INSTANCE.NAME} with ip {#INSTANCE.IP} loss",
+                              "type": "DEPENDENT",
+                              "key": "ping.host[{#INSTANCE.NAME}, loss]",
+                              "delay": "0",
+                              "value_type": "FLOAT",
+                              "units": "%",
+                              "preprocessing": [
+                                  {
+                                      "type": "JSONPATH",
+                                      "parameters": [
+                                          "$.loss"
+                                      ]
+                                  }
+                              ],
+                              "master_item": {
+                                  "key": "remote.ping[{#INSTANCE.NAME}]"
+                              },
+                              "tags": [
+                                  {
+                                      "tag": "component",
+                                      "value": "health"
+                                  },
+                                  {
+                                      "tag": "component",
+                                      "value": "icmp"
+                                  }
+                              ],
+                              "trigger_prototypes": [
+                                  {
+                                      "uuid": "24976caea4464e69ad55c0fcd162ac33",
+                                      "expression": "last(/Remote Ping Test - ICMP Agent Discovery Windows/ping.host[{#INSTANCE.NAME}, loss])>{$ICMP.PING.LOSS}",
+                                      "name": "ICMP Ping loss too high",
+                                      "opdata": "Current loss: {ITEM.LASTVALUE1}",
+                                      "priority": "HIGH",
+                                      "dependencies": [
+                                          {
+                                              "name": "ICMP Ping does not respond",
+                                              "expression": "last(/Remote Ping Test - ICMP Agent Discovery Windows/ping.host[{#INSTANCE.NAME}, status])=0"
+                                          }
+                                      ]
+                                  }
+                              ]
+                          },
+                          {
+                              "uuid": "385a5727f6a2477092be929b797f2f19",
+                              "name": "Remote ping to {#INSTANCE.NAME} with ip {#INSTANCE.IP} response",
+                              "type": "DEPENDENT",
+                              "key": "ping.host[{#INSTANCE.NAME}, response]",
+                              "delay": "0",
+                              "value_type": "FLOAT",
+                              "units": "s",
+                              "preprocessing": [
+                                  {
+                                      "type": "JSONPATH",
+                                      "parameters": [
+                                          "$.response"
+                                      ]
+                                  }
+                              ],
+                              "master_item": {
+                                  "key": "remote.ping[{#INSTANCE.NAME}]"
+                              },
+                              "tags": [
+                                  {
+                                      "tag": "component",
+                                      "value": "health"
+                                  },
+                                  {
+                                      "tag": "component",
+                                      "value": "icmp"
+                                  }
+                              ],
+                              "trigger_prototypes": [
+                                  {
+                                      "uuid": "d297b61a8dcb48169f237416a1067e1d",
+                                      "expression": "last(/Remote Ping Test - ICMP Agent Discovery Windows/ping.host[{#INSTANCE.NAME}, response])>{$ICMP.PING.LATENCY}",
+                                      "name": "ICMP Ping latency is too high",
+                                      "opdata": "Current latency: {ITEM.LASTVALUE1}",
+                                      "priority": "AVERAGE",
+                                      "dependencies": [
+                                          {
+                                              "name": "ICMP Ping does not respond",
+                                              "expression": "last(/Remote Ping Test - ICMP Agent Discovery Windows/ping.host[{#INSTANCE.NAME}, status])=0"
+                                          }
+                                      ]
+                                  }
+                              ]
+                          },
+                          {
+                              "uuid": "a56045ec757f49518b079bc3122d48d5",
+                              "name": "Remote ping to {#INSTANCE.NAME} with ip {#INSTANCE.IP} status",
+                              "type": "DEPENDENT",
+                              "key": "ping.host[{#INSTANCE.NAME}, status]",
+                              "delay": "0",
+                              "preprocessing": [
+                                  {
+                                      "type": "JSONPATH",
+                                      "parameters": [
+                                          "$.ping"
+                                      ]
+                                  }
+                              ],
+                              "master_item": {
+                                  "key": "remote.ping[{#INSTANCE.NAME}]"
+                              },
+                              "tags": [
+                                  {
+                                      "tag": "component",
+                                      "value": "health"
+                                  },
+                                  {
+                                      "tag": "component",
+                                      "value": "icmp"
+                                  }
+                              ],
+                              "trigger_prototypes": [
+                                  {
+                                      "uuid": "4696e36aff004678a675474298872ed0",
+                                      "expression": "last(/Remote Ping Test - ICMP Agent Discovery Windows/ping.host[{#INSTANCE.NAME}, status])=0",
+                                      "name": "ICMP Ping does not respond",
+                                      "priority": "HIGH"
+                                  }
+                              ]
+                          },
+                          {
+                              "uuid": "41082a1a97204c22aa3917490298e520",
+                              "name": "Get remote ping data {#INSTANCE.NAME} with IP {#INSTANCE.IP}",
+                              "type": "TRAP",
+                              "key": "remote.ping[{#INSTANCE.NAME}]",
+                              "delay": "0",
+                              "history": "1d",
+                              "trends": "0",
+                              "value_type": "TEXT",
+                              "tags": [
+                                  {
+                                      "tag": "component",
+                                      "value": "health"
+                                  },
+                                  {
+                                      "tag": "component",
+                                      "value": "icmp"
+                                  }
+                              ]
+                          },
+                          {
+                              "uuid": "4b7da8bbc5dc4bbb9b25b68d51581e2b",
+                              "name": "Exec remote ping to {#INSTANCE.NAME} with ip {#INSTANCE.IP}",
+                              "type": "ZABBIX_ACTIVE",
+                              "key": "system.run[powershell.exe -NoProfile -ExecutionPolicy Bypass -file \"C:\\Program Files\\Zabbix Agent 2\\script\\remoteping.ps1\"  -hostName \"{#INSTANCE.NAME}\" -ip \"{#INSTANCE.IP}\" -pingCount 5  2>&1 , nowait]",
+                              "trends": "0",
+                              "value_type": "TEXT",
+                              "tags": [
+                                  {
+                                      "tag": "component",
+                                      "value": "health"
+                                  },
+                                  {
+                                      "tag": "component",
+                                      "value": "icmp"
+                                  }
+                              ]
+                          }
+                      ]
+                  }
+              ],
+              "tags": [
+                  {
+                      "tag": "owner",
+                      "value": "raulgn"
+                  }
+              ],
+              "macros": [
+                  {
+                      "macro": "{$ICMP.PING.LATENCY}",
+                      "value": "0.1",
+                      "description": "Time in seconds it takes to respond to an ICMP ping."
+                  },
+                  {
+                      "macro": "{$ICMP.PING.LOSS}",
+                      "value": "40",
+                      "description": "ICMP ping loss in percent."
+                  }
+              ]
+          }
+      ]
+  }
+}
